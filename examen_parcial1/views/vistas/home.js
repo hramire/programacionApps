@@ -1,12 +1,32 @@
 import { Button, NativeBaseProvider } from "native-base";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import { initializeApp } from "firebase/app";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { firebaseConfig } from "../../auth/DB/firebase_config";
 
 
 const Home = () => {
   const navigation = useNavigation();
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const [productos, setProductos] = useState([]);
+  
+
+  const getProductosAlv = async () => {
+    const docRef = collection(db, "products");
+    const querySnapshot = await getDocs(docRef);
+
+    const newProductos = [...productos];
+    querySnapshot.forEach((doc) => newProductos.push(doc.data()));
+
+    setProductos(newProductos);
+  }
+
+  useEffect(() => {
+    getProductosAlv();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -21,6 +41,8 @@ const Home = () => {
         <Button onPress={() => navigation.navigate("productos_adds")} style={styles.buttonDesign}>
           Agregar productos
         </Button>
+
+        {productos.map((producto, i) => <Text key={i}>{producto.nombre}: {producto.precio}</Text>)}
       </View>
     </SafeAreaView>
   );

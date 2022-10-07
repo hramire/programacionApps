@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TextInput, Button, Alert } from "react-native";
 import { getDatabase, getAuth } from "firebase/database";
 import { map } from "@firebase/util";
@@ -7,6 +7,7 @@ import { firebaseConfig } from "../../auth/DB/firebase_config";
 import { collection, addDoc } from "firebase/firestore";
 import { getFirestore } from 'firebase/firestore';
 import { useNavigation } from "@react-navigation/native";
+import firebase from "../../auth/DB/firebase_config"
 
 
 
@@ -26,7 +27,9 @@ const ProductosAdd = (props) =>{
         await addDoc(collection(database, "products"), state)
         console.log(state);
         navigation.navigate("Home")
+        props.navigation.navigate("Home")
         Alert.alert("Producto agregado exitosamente")
+        
     }
 
     return(
